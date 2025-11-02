@@ -23,7 +23,8 @@ const limiter = rateLimiter({
 	},
 	keyGenerator: (c: Context) => {
 		// Use the IP address from the X-Forwarded-For header if behind a proxy, or the remote address
-		const ip = c.req.header('x-forwarded-for') || c.req.header('cf-connecting-ip') || c.req.header('x-real-ip') || 'unknown';
+		const ip =
+			c.req.header("x-forwarded-for") || c.req.header("cf-connecting-ip") || c.req.header("x-real-ip") || "unknown";
 		return ip;
 	},
 });
@@ -33,56 +34,46 @@ const limiter = rateLimiter({
 /**
  * @route POST /register
  */
-authRoutes.post(
-	"/register",
-	limiter,
-	zValidator("json", registerSchema),
-	async (c) => {
-		const { username, email, password } = c.req.valid("json"); 
+authRoutes.post("/register", limiter, zValidator("json", registerSchema), async (c) => {
+	const { username, email, password } = c.req.valid("json");
 
-		const newUser = await authService.register(username, email, password);
-		logger.success(`Usuario registrado: ${newUser.username} (ID: ${newUser.id})`);
+	const newUser = await authService.register(username, email, password);
+	logger.success(`Usuario registrado: ${newUser.username} (ID: ${newUser.id})`);
 
-		return c.json(
-			{
-				message: SUCCESS_MESSAGES.REGISTER_SUCCESS,
-				user: newUser,
-			},
-			201,
-		);
-	},
-);
+	return c.json(
+		{
+			message: SUCCESS_MESSAGES.REGISTER_SUCCESS,
+			user: newUser,
+		},
+		201,
+	);
+});
 
 /**
  * @route POST /login
  */
-authRoutes.post(
-	"/login",
-	limiter,
-	zValidator("json", loginSchema),
-	async (c) => {
-		const { email, password } = c.req.valid("json");
-		logger.info(`Intento de login para: ${email}`);
+authRoutes.post("/login", limiter, zValidator("json", loginSchema), async (c) => {
+	const { email, password } = c.req.valid("json");
+	logger.info(`Intento de login para: ${email}`);
 
-		try {
-			const result = await authService.login(email, password);
-			logger.success(`Login exitoso para: ${result.user.email} (ID: ${result.user.id})`);
-			return c.json({
-				message: SUCCESS_MESSAGES.LOGIN_SUCCESS,
-				data: result,
-			});
-		} catch (error) {
-			if (
-				error instanceof Error &&
-				(error.message === ERROR_MESSAGES.USER_NOT_FOUND || error.message === ERROR_MESSAGES.PASSWORD_INCORRECT)
-			) {
-				logger.error(`\nLogin fallido para: ${email} - Credenciales inválidas`);
-				throw new UnauthorizedError(ERROR_MESSAGES.INVALID_CREDENTIALS);
-			}
-			throw error;
+	try {
+		const result = await authService.login(email, password);
+		logger.success(`Login exitoso para: ${result.user.email} (ID: ${result.user.id})`);
+		return c.json({
+			message: SUCCESS_MESSAGES.LOGIN_SUCCESS,
+			data: result,
+		});
+	} catch (error) {
+		if (
+			error instanceof Error &&
+			(error.message === ERROR_MESSAGES.USER_NOT_FOUND || error.message === ERROR_MESSAGES.PASSWORD_INCORRECT)
+		) {
+			logger.error(`\nLogin fallido para: ${email} - Credenciales inválidas`);
+			throw new UnauthorizedError(ERROR_MESSAGES.INVALID_CREDENTIALS);
 		}
-	},
-);
+		throw error;
+	}
+});
 
 // --- Rutas Privadas (¡AHORA SÍ LAS INCLUYO!) ---
 
@@ -90,7 +81,7 @@ authRoutes.post(
  * @route GET /me
  */
 authRoutes.get("/me", jwtAuthMiddleware, getUserFromContext, async (c) => {
-	const userPayload = c.get("user"); 
+	const userPayload = c.get("user");
 	const user = await authService.findUserById(userPayload.id);
 	if (!user) {
 		throw new UnauthorizedError(ERROR_MESSAGES.USER_NOT_FOUND);

@@ -82,7 +82,7 @@ export const ERROR_MESSAGES = {
 	VALIDATION_POKEMON_ID_REQUIRED: "El pokemonId es requerido y debe ser un número.",
 	FAVORITE_ALREADY_EXISTS: "Este Pokémon ya está en tus favoritos.",
 	FAVORITE_NOT_FOUND: "Este Pokémon no se encontró en tus favoritos.",
-	VALIDATION_SEARCH_TERM_REQUIRED: "El \"searchTerm\" es requerido y debe ser un string.",
+	VALIDATION_SEARCH_TERM_REQUIRED: 'El "searchTerm" es requerido y debe ser un string.',
 	HISTORY_ENTRY_NOT_FOUND: "Entrada de historial no encontrada.",
 	HISTORY_FORBIDDEN: "No tienes permiso para eliminar esta entrada.",
 	VALIDATION_LIST_NAME_REQUIRED: "El nombre de la lista es requerido.",

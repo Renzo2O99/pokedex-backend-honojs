@@ -21,19 +21,16 @@ favoritesRoutes.use("*", jwtAuthMiddleware, getUserFromContext);
  * @route GET /
  * @description Obtiene todos los favoritos del usuario.
  */
-favoritesRoutes.get(
-	"/",
-	async (c) => {
-		// Lógica del "getFavorites" controller
-		const user = c.get("user");
-		const userFavorites = await favoritesService.getFavoritesByUserId(user.id);
+favoritesRoutes.get("/", async (c) => {
+	// Lógica del "getFavorites" controller
+	const user = c.get("user");
+	const userFavorites = await favoritesService.getFavoritesByUserId(user.id);
 
-		return c.json({
-			message: SUCCESS_MESSAGES.FAVORITES_FETCHED,
-			data: userFavorites,
-		});
-	},
-);
+	return c.json({
+		message: SUCCESS_MESSAGES.FAVORITES_FETCHED,
+		data: userFavorites,
+	});
+});
 
 /**
  * @route POST /

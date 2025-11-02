@@ -14,6 +14,8 @@ import { logger } from "./core/utils/logger";
 import { GeneralError } from "./core/utils/errors";
 import { ENVIRONMENT_MESSAGES } from "./core/utils/constants";
 import { favoritesRoutes } from "./features/favorites/favorites.routes";
+import { historyRoutes } from "./features/search-history/search-history.routes";
+import { customListsRoutes } from "./features/custom-lists/custom-lists.routes";
 
 const app = new Hono().basePath("/api");
 
@@ -31,6 +33,10 @@ app.use(
 
 app.use("*", secureHeaders());
 
+if (process.env.NODE_ENV !== "production") {
+	app.use("*", honoLogger((message) => logger.info(message)));
+}
+
 app.use(
 	"*",
 	honoLogger((message) => logger.info(message)),
@@ -42,6 +48,8 @@ app.use(
 app.get("/", (c) => c.json({ message: "¡El backend de Hono está funcionando!" }));
 app.route("/auth", authRoutes);
 app.route("/favorites", favoritesRoutes);
+app.route("/search-history", historyRoutes);
+app.route("/custom-lists", customListsRoutes);
 
 // --------------------------------------------------
 // MANEJADOR DE ERRORES GLOBAL
