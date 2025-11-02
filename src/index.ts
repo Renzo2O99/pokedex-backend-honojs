@@ -13,6 +13,7 @@ import { authRoutes } from "./features/auth/auth.routes";
 import { logger } from "./core/utils/logger";
 import { GeneralError } from "./core/utils/errors";
 import { ENVIRONMENT_MESSAGES } from "./core/utils/constants";
+import { favoritesRoutes } from "./features/favorites/favorites.routes";
 
 const app = new Hono().basePath("/api");
 
@@ -40,6 +41,7 @@ app.use(
 // --------------------------------------------------
 app.get("/", (c) => c.json({ message: "¡El backend de Hono está funcionando!" }));
 app.route("/auth", authRoutes);
+app.route("/favorites", favoritesRoutes);
 
 // --------------------------------------------------
 // MANEJADOR DE ERRORES GLOBAL

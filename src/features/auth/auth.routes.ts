@@ -1,5 +1,5 @@
 // src/features/auth/auth.routes.ts
-import { type Context, type Env, Hono, type Input } from "hono";
+import { type Context, Hono } from "hono";
 import bcrypt from "bcryptjs";
 import { zValidator } from "@hono/zod-validator";
 
@@ -8,22 +8,23 @@ import { registerSchema, loginSchema, changePasswordSchema } from "./auth.valida
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../core/utils/constants";
 import { logger } from "../../core/utils/logger";
 import { UnauthorizedError } from "../../core/utils/errors";
-import { type Promisify, rateLimiter } from "hono-rate-limiter";
+import { rateLimiter } from "hono-rate-limiter";
 import { getUserFromContext, jwtAuthMiddleware } from "./auth.middleware";
 
 const authService = new AuthService();
 export const authRoutes = new Hono();
 
-// Configura el rate limiter (reemplaza express-rate-limit)
 const limiter = rateLimiter({
-	windowMs: 60 * 1000, // 1 minuto
-	limit: 10, // 5 peticiones por IP por minuto
+	windowMs: 60 * 1000,
+	limit: 10,
 	message: {
 		status: "error",
 		message: ERROR_MESSAGES.TOO_MANY_REQUESTS,
 	},
-	keyGenerator: (_c: Context<Env, string, Input>): Promisify<string> => {
-		throw new Error("Function not implemented.");
+	keyGenerator: (c: Context) => {
+		// Use the IP address from the X-Forwarded-For header if behind a proxy, or the remote address
+		const ip = c.req.header('x-forwarded-for') || c.req.header('cf-connecting-ip') || c.req.header('x-real-ip') || 'unknown';
+		return ip;
 	},
 });
 
@@ -35,10 +36,9 @@ const limiter = rateLimiter({
 authRoutes.post(
 	"/register",
 	limiter,
-	zValidator("json", registerSchema), // Valida el body
+	zValidator("json", registerSchema),
 	async (c) => {
-		// La lógica de tu 'registerUser' controller
-		const { username, email, password } = c.req.valid("json"); // Obtiene el body VALIDADO
+		const { username, email, password } = c.req.valid("json"); 
 
 		const newUser = await authService.register(username, email, password);
 		logger.success(`Usuario registrado: ${newUser.username} (ID: ${newUser.id})`);
@@ -48,7 +48,7 @@ authRoutes.post(
 				message: SUCCESS_MESSAGES.REGISTER_SUCCESS,
 				user: newUser,
 			},
-			201, // Código de estado
+			201,
 		);
 	},
 );
@@ -59,9 +59,8 @@ authRoutes.post(
 authRoutes.post(
 	"/login",
 	limiter,
-	zValidator("json", loginSchema), // Valida el body
+	zValidator("json", loginSchema),
 	async (c) => {
-		// La lógica de tu 'loginUser' controller
 		const { email, password } = c.req.valid("json");
 		logger.info(`Intento de login para: ${email}`);
 
@@ -91,9 +90,7 @@ authRoutes.post(
  * @route GET /me
  */
 authRoutes.get("/me", jwtAuthMiddleware, getUserFromContext, async (c) => {
-	// La lógica de tu 'getCurrentUser' controller
-	const userPayload = c.get("user"); // ¡Aquí está tu usuario!
-
+	const userPayload = c.get("user"); 
 	const user = await authService.findUserById(userPayload.id);
 	if (!user) {
 		throw new UnauthorizedError(ERROR_MESSAGES.USER_NOT_FOUND);
@@ -119,7 +116,7 @@ authRoutes.put(
 	getUserFromContext,
 	zValidator("json", changePasswordSchema),
 	async (c) => {
-		// La lógica de tu 'changeUserPassword' controller
+		// La lógica de tu "changeUserPassword" controller
 		const userPayload = c.get("user");
 		const { oldPassword, newPassword } = c.req.valid("json");
 

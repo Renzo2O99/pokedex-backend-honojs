@@ -1,4 +1,4 @@
-// backend-express/src/core/constants.ts
+// src/core/constants.ts
 
 /**
  * @fileoverview Constantes centralizadas de la aplicación.
@@ -61,7 +61,7 @@ export const ERROR_MESSAGES = {
 	TOKEN_PAYLOAD_INVALID: "Formato de payload de token inválido.",
 	JWT_SECRET_NOT_DEFINED: "JWT_SECRET no está definido en las variables de entorno.",
 
-	// Errores de Validación (express-validator)
+	// Errores de Validación (zod)
 	VALIDATION_USERNAME_REQUIRED: "El nombre de usuario es requerido.",
 	VALIDATION_USERNAME_MIN_LENGTH: "El nombre de usuario debe tener al menos 3 caracteres.",
 	VALIDATION_EMAIL_INVALID: "Debe ser un email válido.",
@@ -82,7 +82,7 @@ export const ERROR_MESSAGES = {
 	VALIDATION_POKEMON_ID_REQUIRED: "El pokemonId es requerido y debe ser un número.",
 	FAVORITE_ALREADY_EXISTS: "Este Pokémon ya está en tus favoritos.",
 	FAVORITE_NOT_FOUND: "Este Pokémon no se encontró en tus favoritos.",
-	VALIDATION_SEARCH_TERM_REQUIRED: 'El "searchTerm" es requerido y debe ser un string.',
+	VALIDATION_SEARCH_TERM_REQUIRED: "El \"searchTerm\" es requerido y debe ser un string.",
 	HISTORY_ENTRY_NOT_FOUND: "Entrada de historial no encontrada.",
 	HISTORY_FORBIDDEN: "No tienes permiso para eliminar esta entrada.",
 	VALIDATION_LIST_NAME_REQUIRED: "El nombre de la lista es requerido.",

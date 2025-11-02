@@ -26,9 +26,9 @@ type Env = {
 
 export const jwtAuthMiddleware = jwt({
 	secret: JWT_SECRET,
-	// Puedes añadir opciones de verificación adicionales aquí, como el 'aud' (audience)
+	// Puedes añadir opciones de verificación adicionales aquí, como el "aud" (audience)
 	// verification: {
-	//     aud: 'mi-app-audience'
+	//     aud: "mi-app-audience"
 	// }
 });
 
