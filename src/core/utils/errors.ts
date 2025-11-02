@@ -1,4 +1,4 @@
-// backend-express/src/core/utils/errors.ts
+// src/core/utils/errors.ts
 
 /**
  * @fileoverview Clases de error personalizadas para la aplicación.
